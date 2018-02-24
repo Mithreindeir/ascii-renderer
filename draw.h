@@ -30,6 +30,8 @@ struct text_rect {
     int w, h;
 };
 
+struct text_rect * text_rect_init(int x, int y, int w, int h);
+void text_wrap(char ** line_buf, int w, int h, const char * input);
 void draw_rect(struct text_buffer * buf, struct text_rect * rect);
 
 #endif
