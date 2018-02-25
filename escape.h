@@ -9,7 +9,8 @@
 #define CLEAR_SCRN          "\x1b[2J"
 #define CURSOR_REPORT       "\x1b[6n"
 #define CURSOR_POS          "\x1b[%d;%df"
-
+#define CURSOR_DOWN         "\x1b[%dB"
+#define CURSOR_FORWARD      "\x1b[%dC"
 
 /*Color Escape Codes*/
 #define COLOR_24FG(r, g, b)     (ESC##"[38;2;"##r##";"##g##";"##b)

@@ -2,6 +2,8 @@
 #define TERM_H
 
 #include <termios.h>
+#include <sys/ioctl.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -21,6 +23,7 @@ void get_winsize(int * w, int * y);
 
 /*Standard in/out wrappers*/
 void write_str(const char * str);
+void writef(const char * fmt, ...);
 void write_buffer(char * buf, int len);
 void read_until(char * buf, char delim, int max);
 void read_buffer(char * buf, int len);

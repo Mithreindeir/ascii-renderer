@@ -1,14 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "draw.h"
+#include "syntax.h"
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 int main(int argc, char **argv)
 {
-	struct termios original = get_term();
+    struct termios original = get_term();
 	struct text_buffer *buf = text_buffer_init();
-    struct text_rect * rect = text_rect_init(5, 5, 20, 20);
+	int w, h;
+	get_winsize(&w, &h);
+    struct text_rect * rect = text_rect_init(1, 2, w/2-2, h/2-2);
+    struct text_rect * rect2 = text_rect_init(w/2+1, 2, w/2-2, h/2-2);
     set_term(raw_term());
 
 	char c = 0;
@@ -20,8 +24,10 @@ int main(int argc, char **argv)
 		write_str("\x1b[2J");
 		write_str("\x1b[H");
 		text_buffer_clear(buf);
-		
-		text_wrap(rect->fill, rect->w, rect->h, cbuf);
+    
+	    text_wrap(rect->fill, rect->w, rect->h, cbuf);
+	    text_wrap(rect2->fill, rect2->w, rect2->h, cbuf);
+	    draw_rect(buf, rect2);
 		draw_rect(buf, rect);
 		
 		text_buffer_print(buf, "\x1b[?25h");

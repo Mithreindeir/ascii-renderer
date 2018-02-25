@@ -51,6 +51,22 @@ void get_cursor(int *x, int *y)
 		x = 0, y = 0;
 }
 
+void get_winsize(int *x, int *y)
+{
+    struct winsize window;
+    *x = 0, *y = 0;
+
+    //If ioctl can't get the window size, then set the cursor to corner of window and get pos
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &window) == -1) {
+        writef(CURSOR_DOWN, "999");
+        writef(CURSOR_FORWARD, "999");
+        get_cursor(x, y);
+    } else {
+        *x = window.ws_col;
+        *y = window.ws_row;
+    }
+}
+
 void read_until(char *buf, char delim, int max)
 {
 	int i = 0;
@@ -75,6 +91,22 @@ char read_char()
 void write_str(const char *str)
 {
 	write(STDOUT_FILENO, str, strlen(str));
+}
+
+void writef(const char * fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    size_t needed = vsnprintf(NULL, 0, fmt, args);
+    va_end(args);
+    
+    char * str = malloc(needed+1);
+    va_start(args, fmt);
+    vsnprintf(str, needed, fmt, args);
+    va_end(args);
+
+    write_buffer(str, needed);
+    free(str);
 }
 
 void write_buffer(char *buf, int len)
