@@ -57,43 +57,45 @@ void text_buffer_clear(struct text_buffer *buf)
 	buf->len = 0;
 }
 
-struct text_rect * text_rect_init(int x, int y, int w, int h)
+struct text_rect *text_rect_init(int x, int y, int w, int h)
 {
-    struct text_rect * rect = malloc(sizeof(struct text_rect));
+	struct text_rect *rect = malloc(sizeof(struct text_rect));
 
-    rect->x = x;
-    rect->y = y;
-    rect->w = w;
-    rect->h = h;
-    rect->fill = malloc(sizeof(char*)*h);
-    for (int i = 0; i < h; i++) {
-        rect->fill[i] = malloc(w);
-        memset(rect->fill[i], 0, w);
-    }
+	rect->x = x;
+	rect->y = y;
+	rect->w = w;
+	rect->h = h;
+	rect->fill = malloc(sizeof(char *) * h);
+	for (int i = 0; i < h; i++) {
+		rect->fill[i] = malloc(w);
+		memset(rect->fill[i], 0, w);
+	}
 
-    return rect;
+	return rect;
 }
 
-void text_wrap(char ** line_buf, int w, int h, const char * input)
+void text_wrap(char **line_buf, int w, int h, const char *input)
 {
-    if (!input) return;
+	if (!input)
+		return;
 
-    //Clear line buffer first
-    for (int i = 0; i < h; i++) {
-        memset(line_buf[i], 0, w);
-    }
-    int len = strlen(input);
-    int col = 1, ln_last= 0, ln_iter = 0;
-    int nl = 0, be = 0, le = 0;
+	//Clear line buffer first
+	for (int i = 0; i < h; i++) {
+		memset(line_buf[i], 0, w);
+	}
+	int len = strlen(input);
+	int col = 1, ln_last = 0, ln_iter = 0;
+	int nl = 0, be = 0, le = 0;
 
-    for (int i = 0; i < len; i++, col++) {
-        if ((nl = input[i] == '\n') || (le = col >= w-1) || (be = i+1 == len )) {
-            strncpy(line_buf[ln_iter], input+ln_last, col);
-            ln_last = i+le+nl;
-            ln_iter++;
-            col = 0;
-        }
-    }
+	for (int i = 0; i < len; i++, col++) {
+		if ((nl = input[i] == '\n') || (le = col >= w - 1)
+		    || (be = i + 1 == len)) {
+			strncpy(line_buf[ln_iter], input + ln_last, col);
+			ln_last = i + le + nl;
+			ln_iter++;
+			col = 0;
+		}
+	}
 }
 
 void draw_rect(struct text_buffer *buf, struct text_rect *rect)
@@ -106,13 +108,13 @@ void draw_rect(struct text_buffer *buf, struct text_rect *rect)
 		text_buffer_print(buf, CURSOR_POS, rect->y + i, rect->x);
 		if (i == -1 || i == rect->h) {
 			memset(line, '-', len);
-            line[0] = i==-1 ? ',' : '`';
-            line[rect->w+1] = i==-1 ? '.' : '\'';
-        } else {
+			line[0] = i == -1 ? ',' : '`';
+			line[rect->w + 1] = i == -1 ? '.' : '\'';
+		} else {
 			memset(line, 0x20, len);
 			line[0] = '|';
-			line[rect->w+1] = '|';
-			strncpy(line+1, rect->fill[i], strlen(rect->fill[i]));
+			line[rect->w + 1] = '|';
+			strncpy(line + 1, rect->fill[i], strlen(rect->fill[i]));
 		}
 		text_buffer_print(buf, "%s", line);
 	}
