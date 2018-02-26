@@ -1,8 +1,6 @@
-# ascii-renderer
-API for rendering graphics on the terminal
-WIP project for an api that lets you make beautiful terminal programs.
-
-# Features
+# Ascii-renderer
+API for rendering graphics on the terminal. Not quite usable yet.
+# WIP Features
 
 * Color support and basic Syntax Highlighting
 
