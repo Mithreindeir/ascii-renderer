@@ -7,6 +7,8 @@ struct text_buffer *text_buffer_init()
 	buf->buf = NULL;
 	buf->len = 0;
 	buf->buf_size = 0;
+	buf->pairs = NULL;
+	buf->num_pairs = 0;
 
 	return buf;
 }
@@ -49,7 +51,29 @@ void text_buffer_allocate(struct text_buffer *buf, int len)
 
 void text_buffer_render(struct text_buffer *buf)
 {
-	write_buffer(buf->buf, buf->len);
+	if (buf->pairs) {
+		char * cbuf = color_buffer(buf->buf, buf->len, buf->pairs, buf->num_pairs);
+		int color_start = 0;
+		int color = -1;
+		char clr_buf[16];
+		memset(clr_buf, 0, 16);
+		for (int i = 0; i < buf->len; i++) {
+			int eob = (i+1) >= buf->len;
+			if (color != cbuf[i]) {
+				color = cbuf[i];
+				if ((i - color_start) > 0 || eob)
+					write_buffer(buf->buf+color_start, i - color_start + eob);
+				int cl = snprintf(clr_buf, 16, "\x1b[%dm", cbuf[i]);
+				write_buffer(clr_buf, cl);
+				color_start = i;
+			} else if (eob) {
+				write_buffer(buf->buf+color_start, i-color_start + 1);
+			}
+		}
+		free(cbuf);
+	} else {
+		write_buffer(buf->buf, buf->len);
+	}
 }
 
 void text_buffer_clear(struct text_buffer *buf)
@@ -72,6 +96,18 @@ struct text_rect *text_rect_init(int x, int y, int w, int h)
 	}
 
 	return rect;
+}
+
+void text_rect_destroy(struct text_rect * rect)
+{
+	if (!rect) return;
+
+	for (int i = 0; i < rect->h; i++) {
+		free(rect->fill[i]);
+	}
+	free(rect->fill);	
+
+	free(rect);
 }
 
 void text_wrap(char **line_buf, int w, int h, const char *input)

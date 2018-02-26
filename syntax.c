@@ -18,25 +18,7 @@ struct color_pair color_pair_init(char *keyword, char *color)
 	return cp;
 }
 
-void str_append(char **str1, int *len1, const char *str2, int len2)
-{
-	if (!str2 || !len2)
-		return;
-
-	char *str = *str1;
-	int os = *len1;
-	*len1 += len2;
-	if (!str) {
-		str = malloc(*len1 + 1);
-	} else {
-		str = realloc(str, *len1 + 1);
-	}
-
-	strncpy(str + os, str2, len2);
-	str[*len1] = 0;
-	*str1 = str;
-}
-
+/*TODO identify escape codes and prevent them from being colorized*/
 char *color_buffer(const char *input, int len, struct color_pair *pairs,
 		   int num_pairs)
 {
@@ -62,35 +44,19 @@ char *color_buffer(const char *input, int len, struct color_pair *pairs,
 	return color_buf;
 }
 
-char *color_text(const char *string, const char *color_buf, int len)
+struct color_pair *color_pair_add(struct color_pair *pairs, int *num_pairs, struct color_pair pair)
 {
-	if (!string || !color_buf)
-		return NULL;
-
-	char *cstr = NULL;
-	int clen = 0;
-
-	int color_start = 0;
-	int color = -1;
-
-	char buf[16];
-	memset(buf, 0, 16);
-
-	for (int i = 0; i < len; i++) {
-		int eob = (i + 1) >= len;
-		if (color != color_buf[i]) {
-			color = color_buf[i];
-			if ((i - color_start) > 0 || eob)
-				str_append(&cstr, &clen, string + color_start,
-					   i - color_start + eob);
-			int cl = snprintf(buf, 16, "\x1b[%dm", color_buf[i]);
-			str_append(&cstr, &clen, buf, cl);
-			color_start = i;
-		} else if (eob) {
-			str_append(&cstr, &clen, string + color_start,
-				   i - color_start + 1);
-		}
+	struct color_pair * p = pairs;
+	int np = *num_pairs + 1;
+	if (p) {
+		p = realloc(p, np*sizeof(struct color_pair));
+	} else {
+		p = malloc(np*sizeof(struct color_pair));
 	}
-
-	return cstr;
+	p[np-1] = pair;
+	*num_pairs = np;
+	return p;
 }
+
+
+

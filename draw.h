@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 #include "term.h"
+#include "syntax.h"
 
 /*Attempts to provide a simple API for rendering primitives
  * in ASCII using escape codes
@@ -12,6 +13,8 @@ struct text_buffer {
 	char *buf;
 	int len;
 	int buf_size;
+	struct color_pair * pairs;
+	int num_pairs;
 };
 
 struct text_buffer *text_buffer_init();
@@ -31,6 +34,8 @@ struct text_rect {
 };
 
 struct text_rect *text_rect_init(int x, int y, int w, int h);
+void text_rect_destroy(struct text_rect * rect);
+
 void text_wrap(char **line_buf, int w, int h, const char *input);
 void draw_rect(struct text_buffer *buf, struct text_rect *rect);
 
