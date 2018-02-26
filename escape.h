@@ -1,6 +1,9 @@
 #ifndef ESCAPE_H
 #define ESCAPE_H
 
+#include <stdio.h>
+#include <string.h>
+
 /*Miscellaneous Escape Codes*/
 #define ESC                 "\x1b"
 
@@ -24,5 +27,7 @@
 #define MAGENTA             "35"
 #define CYAN                "36"
 #define WHITE               "37"
+
+int escape_code(const char * input, const int len);
 
 #endif

@@ -18,17 +18,21 @@ struct color_pair color_pair_init(char *keyword, char *color)
 	return cp;
 }
 
-/*TODO identify escape codes and prevent them from being colorized*/
 char *color_buffer(const char *input, int len, struct color_pair *pairs,
 		   int num_pairs)
 {
 	if (!input || !pairs || len == 0)
 		return NULL;
 
+	int esc_len = 0;
 	char *color_buf = malloc(len);
 	memset(color_buf, 0, len);
 
 	for (int j = 0; j < len; j++) {
+		if ((esc_len=escape_code(input+j, len-j)) > 0) {
+			j += esc_len-1;
+			continue;
+		}
 		for (int i = 0; i < num_pairs; i++) {
 			if ((j + pairs[i].len) >= len)
 				continue;
