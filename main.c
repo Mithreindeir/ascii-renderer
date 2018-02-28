@@ -14,10 +14,13 @@ char cbuf[400];
 struct color_pair *color_init(int *num_pairs)
 {
 	struct color_pair *pairs = NULL;
-	
+
 	pairs = color_pair_add(pairs, num_pairs, color_pair_init("mov", CYAN));
 	pairs = color_pair_add(pairs, num_pairs, color_pair_init("add", YELLOW));
 	pairs = color_pair_add(pairs, num_pairs, color_pair_init("0", GREEN));
+	pairs = color_pair_add(pairs, num_pairs, color_pair_init("1", GREEN));
+	pairs = color_pair_add(pairs, num_pairs, color_pair_init("NULL", MAGENTA));
+	pairs = color_pair_add(pairs, num_pairs, color_pair_init("struct",YELLOW));
 	pairs = color_pair_add(pairs, num_pairs, color_pair_init("push", MAGENTA));
 	pairs = color_pair_add(pairs, num_pairs, color_pair_init("pop", MAGENTA));
 
@@ -27,7 +30,7 @@ struct color_pair *color_init(int *num_pairs)
 void color_destroy(struct color_pair *pairs, int num_pairs)
 {
 	if (!pairs || !num_pairs) return;
-	
+
 	for (int i = 0; i < num_pairs; i++) {
 		free(pairs[i].keyword);
 	}
@@ -48,20 +51,21 @@ void loop()
 	int iter = 0;
 	memset(cbuf, 0, 400);
 	do {
-		write_str("\x1b[?25l");
-		write_str("\x1b[2J");
-		write_str("\x1b[H");
-		
+		hide_cursor();
+		clear_scrn();
+		set_cursor(0, 0);
+
 		text_buffer_clear(buf);
 		render();
 
-		write_str("\x1b[?25h");
+		unhide_cursor();
 
 		c = read_char();
 		if (iter >= 400)
 			iter = 0;
-		if (c >= 0x20 && c < 0x7f)
+		if ((c >= 0x20 && c < 0x7f) || c=='\n') {
 			cbuf[iter++] = c;
+		}
 		if ((c==CTRL_KEY('H') || c == 0x7f) && iter >= 1) {
 			iter--;
 			memmove(cbuf+iter, cbuf+iter+1, strlen(cbuf)-iter);
@@ -70,7 +74,7 @@ void loop()
 	} while (c != CTRL_KEY('q'));
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	struct termios original = get_term();
 	set_term(raw_term());
@@ -80,7 +84,10 @@ int main(int argc, char **argv)
 	buf = text_buffer_init();
 	buf->num_pairs = num_cpairs;
 	buf->pairs = cpairs;
-	rect = text_rect_init(1, 2, 20, 20);
+
+	int w=0,h=0;
+	get_winsize(&w, &h);
+	rect = text_rect_init(w/4+1, h/4+1, w/2, h/2);
 
 	loop();
 

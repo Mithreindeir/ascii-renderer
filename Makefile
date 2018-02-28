@@ -6,7 +6,7 @@ OBJS = $(SOURCES:.c=.o)
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S), Linux)
-	CXXFLAGS = -std=c99 -pedantic -Wall -ggdb3
+	CXXFLAGS = -std=c99 -pedantic -Wall -Wextra
 endif
 
 .c.o:

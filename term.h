@@ -31,7 +31,10 @@ char read_char();
 
 /*Escape Code Wrappers*/
 void clear_line();
+void clear_scrn();
 void clear_screen();
+void hide_cursor();
+void unhide_cursor();
 
 void die(const char *err);
 

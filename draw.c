@@ -105,8 +105,7 @@ void text_rect_destroy(struct text_rect * rect)
 	for (int i = 0; i < rect->h; i++) {
 		free(rect->fill[i]);
 	}
-	free(rect->fill);	
-
+	free(rect->fill);
 	free(rect);
 }
 
@@ -114,7 +113,6 @@ void text_wrap(char **line_buf, int w, int h, const char *input)
 {
 	if (!input)
 		return;
-
 	//Clear line buffer first
 	for (int i = 0; i < h; i++) {
 		memset(line_buf[i], 0, w);
@@ -154,6 +152,5 @@ void draw_rect(struct text_buffer *buf, struct text_rect *rect)
 		}
 		text_buffer_print(buf, "%s", line);
 	}
-
 	free(line);
 }

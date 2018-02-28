@@ -35,6 +35,10 @@ void set_term(struct termios term)
 
 void set_cursor(int x, int y)
 {
+	if (!x&&!y) {
+		write_str("\x1b[H");
+		return;
+	}
 	char buf[16];
 	snprintf(buf, 16, CURSOR_POS, x, y);
 	write(STDOUT_FILENO, buf, strlen(buf));
@@ -49,6 +53,26 @@ void get_cursor(int *x, int *y)
 	read_until(buf, 'R', 16);
 	if (sscanf(buf, "\x1b[%d;%d", y, x) != -2)
 		x = 0, y = 0;
+}
+
+void hide_cursor()
+{
+	write_str("\x1b[?25l");
+}
+
+void unhide_cursor()
+{
+	write_str("\x1b[?25h");
+}
+
+void clear_line()
+{
+	write_str("\x1b[2K");
+}
+
+void clear_scrn()
+{
+	write_str("\x1b[2J");
 }
 
 void get_winsize(int *x, int *y)
