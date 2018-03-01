@@ -40,7 +40,7 @@ void set_cursor(int x, int y)
 		return;
 	}
 	char buf[16];
-	snprintf(buf, 16, CURSOR_POS, x, y);
+	snprintf(buf, 16, CURSOR_POS, y, x);
 	write(STDOUT_FILENO, buf, strlen(buf));
 }
 
