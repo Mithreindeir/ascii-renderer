@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "escape.h"
+#include "../dmatch.h"
 
 /*Very simple syntax coloring*/
 struct color_pair {

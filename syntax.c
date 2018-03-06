@@ -25,6 +25,7 @@ char *color_buffer(const char *input, int len, struct color_pair *pairs,
 		return NULL;
 
 	int esc_len = 0;
+	int clen = 0;
 	char *color_buf = malloc(len);
 	memset(color_buf, 0, len);
 
@@ -36,10 +37,9 @@ char *color_buffer(const char *input, int len, struct color_pair *pairs,
 		for (int i = 0; i < num_pairs; i++) {
 			if ((j + pairs[i].len) >= len)
 				continue;
-			if (!strncmp(input + j, pairs[i].keyword, pairs[i].len)) {
-				memset(color_buf + j, pairs[i].color,
-				       pairs[i].len);
-				j += pairs[i].len - 1;
+			if ((clen = dmatch_text(input + j, pairs[i].keyword))) {
+				memset(color_buf + j, pairs[i].color, clen);
+				j += clen;
 				break;
 			}
 		}
@@ -61,6 +61,3 @@ struct color_pair *color_pair_add(struct color_pair *pairs, int *num_pairs, stru
 	*num_pairs = np;
 	return p;
 }
-
-
-

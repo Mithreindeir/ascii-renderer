@@ -124,9 +124,9 @@ void writef(const char *fmt, ...)
 	size_t needed = vsnprintf(NULL, 0, fmt, args);
 	va_end(args);
 
-	char *str = malloc(needed + 1);
+	char *str = malloc(needed+1);
 	va_start(args, fmt);
-	vsnprintf(str, needed, fmt, args);
+	vsnprintf(str, needed+1, fmt, args);
 	va_end(args);
 
 	write_buffer(str, needed);
