@@ -17,8 +17,9 @@
 
 /*Color Escape Codes*/
 #define COLOR_24FG(r, g, b)     (ESC##"[38;2;"##r##";"##g##";"##b)
-#define COLOR_4FG(c)             (ESC##"["##c##";0m"
+#define COLOR_4FG(c)             (ESC ## "[" ## c ## ";0m"
 
+#define COLOR_RESET 	    "0"
 #define BLACK               "30"
 #define RED                 "31"
 #define GREEN               "32"

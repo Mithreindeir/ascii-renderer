@@ -15,7 +15,7 @@ struct color_pair {
 };
 
 struct color_pair color_pair_init(char *keyword, char *color);
-char *color_buffer(const char *input, int len, struct color_pair *pairs,
+void color_buffer(const char *input, char * color_buf, int len, struct color_pair *pairs,
 		int num_pairs);
 //Helpers
 struct color_pair *color_pair_add(struct color_pair * pairs, int *num_pairs,

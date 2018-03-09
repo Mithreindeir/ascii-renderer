@@ -9,6 +9,7 @@ struct text_buffer *text_buffer_init()
 	buf->buf_size = 0;
 	buf->pairs = NULL;
 	buf->num_pairs = 0;
+	buf->color_buf = NULL;
 
 	return buf;
 }
@@ -18,6 +19,7 @@ void text_buffer_destroy(struct text_buffer *buf)
 	if (!buf)
 		return;
 
+	free(buf->color_buf);
 	free(buf->buf);
 	free(buf);
 }
@@ -30,11 +32,14 @@ void text_buffer_print(struct text_buffer *buf, const char *fmt, ...)
 	va_end(args);
 
 	text_buffer_allocate(buf, needed);
+	int old_len = buf->len;
 
 	va_start(args, fmt);
 	buf->len +=
 	    vsnprintf(buf->buf + buf->len, buf->buf_size - buf->len, fmt, args);
 	va_end(args);
+
+	memset(buf->color_buf+old_len, 0, buf->len - old_len);
 }
 
 void text_buffer_allocate(struct text_buffer *buf, int len)
@@ -46,13 +51,19 @@ void text_buffer_allocate(struct text_buffer *buf, int len)
 		} else {
 			buf->buf = realloc(buf->buf, buf->buf_size);
 		}
+		if (!buf->color_buf) {
+			buf->color_buf = malloc(buf->buf_size);
+		} else {
+			buf->color_buf = realloc(buf->color_buf, buf->buf_size);
+		}
 	}
 }
 
 void text_buffer_render(struct text_buffer *buf)
 {
 	if (buf->pairs) {
-		char * cbuf = color_buffer(buf->buf, buf->len, buf->pairs, buf->num_pairs);
+		color_buffer(buf->buf, buf->color_buf, buf->len, buf->pairs, buf->num_pairs);
+		char * cbuf = buf->color_buf;
 		int color_start = 0;
 		int color = -1;
 		char clr_buf[16];
@@ -70,7 +81,6 @@ void text_buffer_render(struct text_buffer *buf)
 				write_buffer(buf->buf+color_start, i-color_start + 1);
 			}
 		}
-		free(cbuf);
 	} else {
 		write_buffer(buf->buf, buf->len);
 	}

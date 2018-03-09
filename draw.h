@@ -11,6 +11,7 @@
 
 struct text_buffer {
 	char *buf;
+	char *color_buf;
 	int len;
 	int buf_size;
 	struct color_pair * pairs;

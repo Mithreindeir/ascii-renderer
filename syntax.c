@@ -18,34 +18,35 @@ struct color_pair color_pair_init(char *keyword, char *color)
 	return cp;
 }
 
-char *color_buffer(const char *input, int len, struct color_pair *pairs,
-		   int num_pairs)
+void color_buffer(const char *input, char *color_buf, int len, struct color_pair *pairs, int num_pairs)
 {
 	if (!input || !pairs || len == 0)
-		return NULL;
-
+		return;
 	int esc_len = 0;
 	int clen = 0;
-	char *color_buf = malloc(len);
-	memset(color_buf, 0, len);
-
 	for (int j = 0; j < len; j++) {
 		if ((esc_len=escape_code(input+j, len-j)) > 0) {
 			j += esc_len-1;
 			continue;
 		}
 		for (int i = 0; i < num_pairs; i++) {
-			if ((j + pairs[i].len) >= len)
-				continue;
-			if ((clen = dmatch_text(input + j, pairs[i].keyword))) {
-				memset(color_buf + j, pairs[i].color, clen);
-				j += clen;
+			char const**saved = NULL;
+			int slen=0;
+			if ((clen = dmatch_text(input + j, pairs[i].keyword,&saved,&slen))) {
+				if (slen<=1) {
+					exit(1);
+					continue;
+				}
+				int st = saved[0]-(input+j);
+				int et = saved[1]-(input+j);
+				memset(color_buf+j+st, pairs[i].color, et-st);
+				j += et-1;
+				free(saved);
 				break;
 			}
+			free(saved);
 		}
 	}
-
-	return color_buf;
 }
 
 struct color_pair *color_pair_add(struct color_pair *pairs, int *num_pairs, struct color_pair pair)
