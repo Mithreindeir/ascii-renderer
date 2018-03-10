@@ -10,6 +10,7 @@ struct text_buffer *text_buffer_init()
 	buf->pairs = NULL;
 	buf->num_pairs = 0;
 	buf->color_buf = NULL;
+	buf->cur_color = 0;
 
 	return buf;
 }
@@ -39,7 +40,7 @@ void text_buffer_print(struct text_buffer *buf, const char *fmt, ...)
 	    vsnprintf(buf->buf + buf->len, buf->buf_size - buf->len, fmt, args);
 	va_end(args);
 
-	memset(buf->color_buf+old_len, 0, buf->len - old_len);
+	memset(buf->color_buf+old_len, buf->cur_color, buf->len - old_len);
 }
 
 void text_buffer_allocate(struct text_buffer *buf, int len)

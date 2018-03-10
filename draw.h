@@ -16,6 +16,7 @@ struct text_buffer {
 	int buf_size;
 	struct color_pair * pairs;
 	int num_pairs;
+	int cur_color;
 };
 
 struct text_buffer *text_buffer_init();

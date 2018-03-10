@@ -25,6 +25,7 @@ void color_buffer(const char *input, char *color_buf, int len, struct color_pair
 	int esc_len = 0;
 	int clen = 0;
 	for (int j = 0; j < len; j++) {
+		if (color_buf[j]!=0) continue;
 		if ((esc_len=escape_code(input+j, len-j)) > 0) {
 			j += esc_len-1;
 			continue;
