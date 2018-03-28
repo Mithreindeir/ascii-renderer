@@ -35,7 +35,8 @@ void color_buffer(const char *input, char *color_buf, int len, struct color_pair
 			int slen=0;
 			if ((clen = dmatch_text(input + j, pairs[i].keyword,&saved,&slen))) {
 				if (slen<=1) {
-					exit(1);
+					writef("Matching error: <= 1 marker found at \"%s\"\r\n", pairs[i].keyword);
+					//exit(1);
 					continue;
 				}
 				int st = saved[0]-(input+j);
